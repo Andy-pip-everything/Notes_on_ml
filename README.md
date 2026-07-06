@@ -1,6 +1,6 @@
 Hands_on_bridgedrive
 
-22/06/2026
+## 1
 
 DiffusionDrive does not start with pure noise, but rather with an anchor that has had a small amount of noise added for denoising.
 
@@ -12,7 +12,7 @@ BridgeDrive is compatible with efficient ODE solvers, enabling real-time deploym
 
 <br>
 
-24/06/2026
+## 2
 
 The planning task in autonomous driving can be formulated as predicting future trajectories of the ego-vehicle based on raw sensor inputs.
 
@@ -34,7 +34,7 @@ $$\nabla_{x_t}\log q(x_t|x_0) = -\frac{x_t - \alpha_t x_0}{\sigma_t^2} = \frac{\
 
 $$\min_\theta \mathbb{E} [w(t) \lVert x_\theta(x_t,t) - x_0 \rVert^2]$$
 
-25/06/2026
+## 3
 
 To incorporate anchors into diffusion models in a principled way, we propose to factorize the joint distribution of the ground-truth trajectory x, anchor y, and guidance information z as
 
@@ -50,7 +50,7 @@ $$\min_\theta \mathbb{E} \left[ w(t) \lVert x_\theta(x_t, t, x_T, z) - x_0 \rVer
 
 To physically realize the joint distribution factorization $p_d(x,y,z) = p_d(x|y,z)p_d(y|z)p_d(z)$, the model introduces an independent Anchor Classifier $h_\phi(z, \mathcal{Y})$. This classifier predicts the most suitable anchor $y$ given the scene context $z$, effectively determining the starting point ($x_T=y$) for the diffusion bridge prior to the denoising process.
 
-27/06/2026
+## 4
 
 Mathematical Principles of Standard Diffusion:
 
@@ -100,7 +100,7 @@ $$\min_\theta \mathbb{E}_{p(t)p_d(x_0)q(x_t|x_0)} \left[ w(t) \lVert x_\theta(x_
 The network implicitly learns to approximate the score function as $\nabla_{x_t}\log q(x_t) \approx \frac{\alpha_t x_\theta(x_t, t) - x_t}{\sigma_t^2}$, effectively solving the ODE and completing the generation process.
 
 
-28/06/2026
+## 5
 
 Mathematical Modifications for BridgeDrive:
 
@@ -140,7 +140,7 @@ During the inference (planning) stage, the model translates the chosen anchor $x
 
 The trained denoiser $x_\theta(x_t, t, x_T, z)$ is utilized to approximate the score function. This score guides a numerical ODE solver (e.g., DDIM) to iteratively update the trajectory, efficiently bridging the coarse anchor to the precise final plan. 
 
-29/06/2026
+## 6
 
 End-to-end autonomous driving: map raw sensory inputs directly to trajectory predictions or control commands.
 
