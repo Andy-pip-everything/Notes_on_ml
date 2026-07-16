@@ -35,7 +35,7 @@ Highly different between Open-loop and closed-loop setting. CARLA is most widely
 
 ### Forward Process:
 Mathematically, the forward process can be concluded as:
-$$dx_t=f(t)x_tdt+g(t)dw_t, \quad x_0\sim p_d \quad (1)$$
+$$dx_t=f(t)x_tdt+g(t)dw_t, \quad x_0\sim p_d \quad $$
 
 ### Caculating the loss function:
 $$\frac{dx_t}{dt} = f(t)x_t - \frac{g(t)^2}{2} \mathbf{\nabla_{x_t}\log q(x_t)}$$
@@ -52,7 +52,7 @@ To incorporate anchors into diffusion models in a principled way, we propose to 
 
 $$p_d(x,y,z) = p_d(x|y,z)p_d(y|z)p_d(z)$$
 
-The model constructs a direct bridge between the ground-truth trajectory ($x_0 = x$) and the anchor ($x_T = y$). Because the SDE is linear, it yields an analytical Gaussian transition kernel, enabling efficient, simulation-free training:
+The model constructs a direct bridge between the ground-truth trajectory ( $x_0 = x$ ) and the anchor ( $x_T = y$ ). Because the SDE is linear, it yields an analytical Gaussian transition kernel, enabling efficient, simulation-free training:
 
 $$q(x_t|x_0,x_T) = \mathcal{N}(x_t | a_t x_T + b_t x_0, c_t^2 I)$$
 
@@ -180,7 +180,7 @@ BridgeDrive 在数学上将规划任务形式化为 Diffusion Bridge。这确保
 
 ### 前向过程：
 在数学上，前向过程可以归纳为：
-$$dx_t=f(t)x_tdt+g(t)dw_t, \quad x_0\sim p_d \quad (1)$$
+$$dx_t=f(t)x_tdt+g(t)dw_t, \quad x_0\sim p_d \quad$$
 
 ### 损失函数计算：
 $$\frac{dx_t}{dt} = f(t)x_t - \frac{g(t)^2}{2} \mathbf{\nabla_{x_t}\log q(x_t)}$$
@@ -197,7 +197,7 @@ $$\min_\theta \mathbb{E} [w(t) \lVert x_\theta(x_t,t) - x_0 \rVert^2]$$
 
 $$p_d(x,y,z) = p_d(x|y,z)p_d(y|z)p_d(z)$$
 
-该模型在真实轨迹（$x_0 = x$）和 anchor（$x_T = y$）之间构建了一座直接的桥梁。由于该 SDE（随机微分方程）是线性的，它产生了一个解析的高斯转移核，从而实现了高效、无需仿真的训练：
+该模型在真实轨迹（ $x_0 = x$ ）和 anchor（ $x_T = y$ ）之间构建了一座直接的桥梁。由于该 SDE（随机微分方程）是线性的，它产生了一个解析的高斯转移核，从而实现了高效、无需仿真的训练：
 
 $$q(x_t|x_0,x_T) = \mathcal{N}(x_t | a_t x_T + b_t x_0, c_t^2 I)$$
 
