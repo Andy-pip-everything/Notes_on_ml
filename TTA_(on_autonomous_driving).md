@@ -77,3 +77,17 @@ Tent 适应替代架构： Tent 在原理上是与架构无关的。tent在自�
 
 更新全部模型参数 $\theta$ 的效果，甚至不能超过未自适应的源模型。
 
+# Centaur:RobustEnd-to-EndAutonomousDrivingwithTest-TimeTraining
+
+## 1. Problem
+
+- TENT 只能处理标准交叉熵（分类问题），而传统的端到端自动驾驶模型直接回归出一条连续的轨迹
+
+- fallback layer等预编程的规则或代价函数无法利用新的训练数据进行学习和改进
+
+- 传统的算法依赖设计的代价函数在优化轨迹，tta或类似算法可以自学习/自优化
+
+- TTT对自驾来说延迟太高了，需要像tta一样的算法，不影响推理的速度
+
+## 2. Motivation
+
