@@ -83,11 +83,91 @@ Tent 适应替代架构： Tent 在原理上是与架构无关的。tent在自�
 
 - TENT 只能处理标准交叉熵（分类问题），而传统的端到端自动驾驶模型直接回归出一条连续的轨迹
 
+- 像Hydra-MDP，盲目最小化全局分布的熵，模型会倾向于避开那些拥有大量相似邻居的安全轨迹
+
 - fallback layer等预编程的规则或代价函数无法利用新的训练数据进行学习和改进
 
 - 传统的算法依赖设计的代价函数在优化轨迹，tta或类似算法可以自学习/自优化
 
-- TTT对自驾来说延迟太高了，需要像tta一样的算法，不影响推理的速度
+- TTT对自驾来说延迟太高了，需要更好的优化
+
+<img width="728" height="292" alt="image" src="https://github.com/user-attachments/assets/5e4eba2b-6e82-4f91-973e-3e98a77adb05" />
 
 ## 2. Motivation
 
+- 解决了tta不能用于回归问题，带来全新的可自训练的 TTT算法
+
+- 无监督学习，不再需要大量的人工标注了
+
+- 可接受的延迟范围
+
+## 3. Method
+
+### 轨迹打分：
+
+对真实数据跑kmeans聚类，求出k=8192类中心（来自Hydra-MDP）
+
+$$ \{s_{j}\}_{j=1}^{k}=\{\pi_{\theta}(t_{j},x_{0},c_{0})\}_{j=1}^{k} （1）$$ 
+
+x0​,c0​ 当前帧的传感器输入、导航指令
+
+$$ \hat{t}_{0}=arg~max\{\phi(s_{j})\}_{j=1}^{k} （2）$$
+
+对轨迹打分，分数取NC（不碰撞）、DAC（不越界）、EP（前进效率）、C（舒适度）、TTC（碰撞时间）中最高的值，来自navsim评分规则。
+
+### 最小化损失函数：
+
+$$ arg~min_{\theta}\mathbb{E}_{(t,x,c)\sim D_{kd}}[\mathcal{L}_{kd}(e(t,x,c),\pi_{\theta}(t,x,c))] (3) $$
+
+e是一个专家算法，对任意轨迹给出分数。Dkd是拿这个专家算法在模拟器里得出的知识蒸馏数据集，Lkd交叉熵
+
+> 分布不均，不能直接对kmeans得出的轨迹计算熵
+
+### 聚类熵 Cluster Entropy:
+
+从这里开始不需要设计的算法
+
+首先对k=8192进行采样，优先选择其中专家算法得分高的轨迹，采样出M条轨迹
+
+再从M条轨迹中，按照横向偏移量选出5个锚点
+
+按L2距离为M条轨迹各自找到最近的锚点，从而构造出5个簇。在每个簇内，我们把所有轨迹的预测分数相加，得到锚点分数，再进行归一化
+
+$$
+\left(\frac{score_{a}}{\sum_{a=1}^{5}score_{a}}\right)
+$$
+
+定义为分布的香农熵
+
+### TTT缓冲区：
+
+前向传播之后将求出的梯度放入缓冲区，用缓冲区的平均梯度去更新网络
+
+$$
+\hat{\theta}_{i}=\theta-\eta\{\frac{\partial H}{\partial\theta}\}_{avg}
+$$
+
+> 没有找到官方发布的代码 Hydra-MDP也没有公布
+
+
+## 4. Experiment
+
+Baseline Hydra-MDP 消融实验 M=100 buffer F=4
+
+<img width="935" height="301" alt="image" src="https://github.com/user-attachments/assets/dc868034-3b6a-4c8f-b386-cf5d94b0785e" />
+
+KL散度：对5个评分指标各自在 k=8192 上得到分布，两两求kL散度再求和
+
+Full Entropy：类似Cluster Entropy，但跳过聚类，直接对 100 维分布算熵
+
+Cluster Entropy：聚类，在欧氏轨迹空间按横向偏移分 5 个方向簇
+
+ttt +1.2 Full Entropy +0.3 Cluster Entropy +0.8
+
+### 创新点：
+
+Cluster Entropy
+
+方向聚类锚点
+
+TTT缓冲区
