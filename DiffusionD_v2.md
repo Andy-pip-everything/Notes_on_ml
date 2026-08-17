@@ -173,15 +173,15 @@ navsim_workspace/
 
 $$\text{PDMS} = \text{NC} \times \text{DAC} \times \frac{5 \cdot \text{EP} + 5 \cdot \text{TTC} + 2 \cdot \text{C}}{12}$$
 
-| 缩写 | 指标 | 全称 |
-| --- | --- | --- |
-| NC | `no_collision` | No at-fault Collision |
-| DAC | `drivable_area` | Drivable Area Compliance |
-| DDC | `dir_weighted` | Driving Direction Compliance |
-| EP | `progress` | Ego Progress |
-| TTC | `ttc` | Time-to-Collision |
-| C | `comfort` | Comfort |
-| PDMS | `final` | 聚合总分 |
+| 缩写 | 指标 | 全称 | 取值范围 |
+| --- | --- | --- | --- |
+| NC | `no_collision` | No at-fault Collision | {0, 0.5, 1} |
+| DAC | `drivable_area` | Drivable Area Compliance | {0, 1} |
+| DDC | `dir_weighted` | Driving Direction Compliance | {0, 0.5, 1} v2|
+| EP | `progress` | Ego Progress | [0, 1] 连续值 |
+| TTC | `ttc` | Time-to-Collision | {0, 1} |
+| C | `comfort` | Comfort | {0, 1} |
+| PDMS | `final` | 聚合总分 | --- |
 
 > PDMS 按逐样本计算后再求平均，因此无法用下表各列的均值反推出 `final`（乘法项存在相关性）。
 
